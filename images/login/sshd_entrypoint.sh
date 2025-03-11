@@ -40,12 +40,27 @@ echo "Waiting until munge started"
 while [ ! -S "/run/munge/munge.socket.2" ]; do sleep 2; done
 
 # Execute hook script if provided
-if [ -n "${HOOK_SCRIPT}" ] && [ -f "${HOOK_SCRIPT}" ]; then
+if [ -n "${HOOK_SCRIPT}" ]; then
+    # Exit early if the file doesn't exist
+    if [ ! -f "${HOOK_SCRIPT}" ]; then
+        echo "Hook script file '${HOOK_SCRIPT}' does not exist. Exiting."
+        exit 1
+    fi
+
     echo "Executing hook script: ${HOOK_SCRIPT}"
+    set +e
     if [ -x "${HOOK_SCRIPT}" ]; then
         "${HOOK_SCRIPT}"
     else
         bash "${HOOK_SCRIPT}"
+    fi
+
+    exit_code=$?
+    set -e
+
+    if [ $exit_code -ne 0 ]; then
+        echo "Hook script failed with exit code $exit_code. Exiting."
+        exit 1
     fi
 fi
 
