@@ -348,6 +348,7 @@ slurmNodes:
     sshdServiceNodePort: 30022
     # Annotations to be configure on login service
     sshdServiceAnnotations: {}
+    sshdEntrypointHookScriptPath: ""
     munge:
       imagePullPolicy: "IfNotPresent"
       appArmorProfile: "unconfined"
@@ -363,6 +364,7 @@ slurmNodes:
       #        - name: "mlcommons-sd-bench-data"
       #          mountPath: "/mlperf-sd"
       #          volumeSourceName: "mlperf-sd"
+      customMounts: []
   exporter:
     enabled: true
     size: 1

@@ -226,6 +226,9 @@ spec:
       {{- if eq .Values.slurmNodes.login.sshdServiceType "NodePort" }}
       sshdServiceNodePort: {{ required "slurmNodes.login.sshdServiceNodePort is required in case of slurmNodes.login.sshdServiceType == `NodePort`" .Values.slurmNodes.login.sshdServiceNodePort }}
       {{- end }}
+      {{- if .Values.slurmNodes.login.sshdEntrypointHookScriptPath }}
+      sshdEntrypointHookScriptPath: {{ .Values.slurmNodes.login.sshdEntrypointHookScriptPath | quote }}
+      {{- end }}
       munge:
         image: {{ required "sshd munge" .Values.images.munge | quote }}
         imagePullPolicy: {{ default "IfNotPresent" .Values.slurmNodes.login.munge.imagePullPolicy | quote }}
@@ -239,6 +242,8 @@ spec:
           {{- required ".Values.slurmNodes.login.volumes.jail must be provided." .Values.slurmNodes.login.volumes.jail | toYaml | nindent 10 }}
         jailSubMounts:
           {{- default list .Values.slurmNodes.login.volumes.jailSubMounts | toYaml | nindent 10 }}
+        customMounts:
+          {{- default list .Values.slurmNodes.login.volumes.customMounts | toYaml | nindent 10 }}
     exporter:
       enabled: {{ .Values.slurmNodes.exporter.enabled }}
       size: {{ required ".Values.slurmNodes.exporter.size must be provided." .Values.slurmNodes.exporter.size }}
